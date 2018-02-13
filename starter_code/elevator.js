@@ -23,47 +23,39 @@ class Elevator {
 
       update() {
         // si no esta vacía mi waitinglist
-
-       this.log();
+      // this.log();
        console.log(this.requests)
        if (this.requests.length===0){
          this.stop();
-       }else if (this.requests[0]>this.floor){
-          let floor= this.floor;
+        }else {
           this.waitingList.forEach((p,index)=>{
-            if (p.originFloor==floor){this._passengersEnter(p,index);}
+            if (p.startingFloor==this.floor){
+              this._passengersEnter(p,index);}
+           // console.log(this.requests)
           });
+             console.log(this.requests)
+          // NO ENTIENDO PORQUE NO SE VAN LOS DOS YA QUE ES FOR EACH Y DEBERIA SACAR A TODOS LOS QUE SE BAJEN EN ESTE PISO NO?
           this.passengers.forEach((p,index)=>{
-            if (p.destinationFloor==floor){this._passengersLeave(p,index);}
+            if (p.destinationFloor==this.floor){this._passengersLeave(p,index);}
           });
-         this.log();
-         this.floorUp();                  
-       }else if (this.requests[0]<this.floor) {
-          let floor= this.floor;
-          this.waitingList.forEach((p,index)=>{
-            if (p.originFloor==floor){this._passengersEnter(p,index);}
-          });
-          this.passengers.forEach((p,index)=>{
-            if (p.destinationFloor==floor){this._passengersLeave(p,index);}
-          });
-         this.log();
-         this.floorDown(); 
-       }else if(this.requests[0]==this.floor){
-        let floor= this.floor;
-        this.waitingList.forEach((p,index)=>{
-          if (p.startingFloor==floor){this._passengersEnter(p,index);}
-        });
-        this.passengers.forEach((p,index)=>{
-          if (p.destinationFloor==floor){this._passengersLeave(p,index);}
-        });
-       this.requests.shift();
-    
-       }
+          this.log();
+          if (this.requests[0]>this.floor){
+            this.floorUp();
+          } else if (this.requests[0]<this.floor){
+            this.floorDown();
+          }else{
+            this.requests.shift();
+          }
+
+        }
+            
       }
 
   _passengersEnter(person,index) {
     console.log(`${person.name} has enter the elevator`);
     this.passengers.push(person);
+    console.log(this.requests.indexOf(person.startingFloor));
+    this.requests.splice(this.requests.indexOf(person.startingFloor),1);
     this.waitingList.splice(index,1);
     this.requests.push(person.destinationFloor);
    }
@@ -72,6 +64,7 @@ class Elevator {
   _passengersLeave(person,index) {
     console.log(`${person.name} has left the elevator`);
     this.passengers.splice(index,1);
+    this.requests.splice(this.requests.indexOf(person.destinationFloor),1);
    }
 
 // to update the current floor by incrementing it by one. 
